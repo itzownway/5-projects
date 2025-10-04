@@ -1,0 +1,11 @@
+Start the Client 
+----------------
+      - npm run dev 
+
+
+Start the Server
+----------------
+   
+     - npm run start 
+
+
