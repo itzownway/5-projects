@@ -9,3 +9,16 @@ Start the Server
      - npm run start 
 
 
+
+
+
+
+
+Other package used
+-------------------
+
+  - if want to verify then check with package.json file 
+  
+     - cors 
+     - multer
+     - tailwind 
