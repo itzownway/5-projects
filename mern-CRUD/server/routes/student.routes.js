@@ -3,6 +3,7 @@ const {
   handleAddStudentController,
   handleStudentListController,
   handleStudentDeleteController,
+  handleStudentUpdateController,
 } = require("../controller/student.controller");
 
 const multer = require("multer");
@@ -20,10 +21,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// http://localhost:3000/student/addstudent
-// router.post('/addstudent', handleAddStudentController);
 router.post("/addstudent", upload.single("image"), handleAddStudentController);
 router.get("/studentlists", handleStudentListController);
 router.delete("/deletestudent", handleStudentDeleteController);
+router.put('/updatestudent', upload.single("image"), handleStudentUpdateController);
 
 module.exports = router;

@@ -4,7 +4,7 @@ const Student = require("../model/student.model"); // remove destructuring
 const handleAddStudentController = async (req, res) => {
   try {
     const body = req.body;
-    const file = req.file; // multer puts the uploaded file here
+    const file = req.file;
 
     if (
       !body.firstName ||
@@ -19,21 +19,19 @@ const handleAddStudentController = async (req, res) => {
       });
     }
 
-    // Correct way with Mongoose
-    // const addStudent = await Student.create(body);
+    // Remove _id if sent by mistake
+    delete body._id;
+    delete body.Id;
 
     const addStudent = await Student.create({
       ...body,
-      image: file ? file.path : "", // save file path in DB
+      image: file ? file.filename : "",
     });
-
-    console.log("Student added ", addStudent);
 
     return res.status(201).json({
       Message: "Student added successfully",
       Success: true,
-      Id: addStudent?._id,
-      // Data: addStudent,
+      Id: addStudent._id,
     });
   } catch (error) {
     return res.status(500).json({ Message: error.message, Success: false });
@@ -71,8 +69,49 @@ const handleStudentDeleteController = async (req, res) => {
   }
 };
 
+// update student
+const handleStudentUpdateController = async (req, res) => {
+  try {
+    const body = req.body;
+    const file = req.file;
+
+    const studentId = body.Id || body._id;
+
+    if (!studentId) {
+      return res.status(400).json({
+        Message: "Missing student Id",
+        Success: false,
+      });
+    }
+
+    const updatedFields = { ...body };
+    if (file) updatedFields.image = file.filename;
+
+    delete updatedFields._id;
+    delete updatedFields.Id;
+
+    const updatedStudent = await Student.updateOne(
+      { _id: studentId },
+      { $set: updatedFields }
+    );
+
+    if (updatedStudent.modifiedCount > 0) {
+      return res
+        .status(200)
+        .json({ Message: "Student updated successfully", Success: true });
+    } else {
+      return res
+        .status(200)
+        .json({ Message: "No changes made", Success: true });
+    }
+  } catch (error) {
+    return res.status(400).json({ Message: error.message, Success: false });
+  }
+};
+
 module.exports = {
   handleAddStudentController,
   handleStudentListController,
   handleStudentDeleteController,
+  handleStudentUpdateController,
 };
